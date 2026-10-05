@@ -292,6 +292,7 @@ ModelName = Literal[
     "qwen3-vl-30b-a3b",
     "weaver-mini",
     "weaver-max",
+    "weaver-mini-diffuser",
     "qwen3-next-80b-a3b",
     "qwen3-omni-30b-a3b",
     "qwen3-custom-30b-a3b",
@@ -2905,6 +2906,22 @@ class MultimodalGeneral(BaseModel):
       None,
       description="Maximum Qwen3-Omni/3.5 video grid size in width patches, before spatial merge.",
   )
+  latent_channels: int = Field(48, description="Number of latent channels per pixel before patchification in Weaver.")
+  patch_size: int = Field(2, description="Spatial patch size for patchify/unpatchify in Weaver.")
+  time_embed_in_channels: int = Field(256, description="Sinusoidal timestep embedding channel dimension in Weaver.")
+  timestep_scale: float = Field(0.001, description="Scaling factor applied to diffusion timesteps in Weaver.")
+  timestep_max_period: int = Field(10000, description="Maximum period for sinusoidal timestep embeddings in Weaver.")
+  qk_norm_for_text: bool = Field(
+      True, description="Whether to apply QK RMSNorm on the text/understanding pathway in Weaver."
+  )
+  qk_norm_for_diffusion: bool = Field(
+      True, description="Whether to apply QK RMSNorm on the diffusion/generation pathway in Weaver."
+  )
+  use_und_k_norm_for_gen: bool = Field(
+      False, description="Whether the generative pathway uses the understanding K-norm in Weaver."
+  )
+  weaver_block_q: int = Field(128, description="Query block size for Pallas/Tokamax attention in Weaver.")
+  weaver_block_kv: int = Field(128, description="Key/Value block size for Pallas/Tokamax attention in Weaver.")
 
   @model_validator(mode="after")
   def validate_video_max_grid(self) -> "MultimodalGeneral":
@@ -4973,6 +4990,7 @@ class MaxTextConfig(
           "maxtext-omni-gemma3-qwen3",
           "weaver-mini",
           "weaver-max",
+          "weaver-mini-diffuser",
       )
       if self.model_name not in valid_mm_models and self.model_name != "default":
         raise ValueError(f"Multimodal is only supported for {valid_mm_models}, not {self.model_name}")

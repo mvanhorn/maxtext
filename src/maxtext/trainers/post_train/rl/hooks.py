@@ -18,6 +18,7 @@ from typing import Any, Callable, Optional
 
 from tunix.sft import hooks as _tunix_hooks
 
+from maxtext.common.goodput import GoodputEvent, record_goodput
 from maxtext.trainers.post_train.rl.evaluate_rl import evaluate
 from maxtext.utils import max_logging
 
@@ -66,9 +67,9 @@ class RLTrainingHooks(_tunix_hooks.TrainingHooks):
     del train_ctx
 
   def on_train_step_start(self, train_ctx):  # noqa: ARG002
-    if getattr(self._trainer_config, "enable_goodput_recording", False) and self._goodput_recorder:
+    if getattr(self._trainer_config, "enable_goodput_recording", False):
       # Ensure step is monotonically increasing across RL iterations (0, 1, 2, ...)
-      self._goodput_recorder.record_step_start_time(train_ctx.train_steps)
+      record_goodput(self._goodput_recorder, f"record_{GoodputEvent.STEP.value}_start_time", train_ctx.train_steps)
 
   def on_eval_step_start(self, train_ctx):  # noqa: ARG002
     del train_ctx

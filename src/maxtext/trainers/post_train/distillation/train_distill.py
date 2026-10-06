@@ -848,7 +848,7 @@ def _train_distill_impl(
         return inputs_dict
 
       trainer = trainer.with_gen_model_input_fn(custom_gen_model_input_fn)
-      trainer.with_training_hooks(BaseTrainingHooks(student_config, goodput_recorder))
+      trainer.with_training_hooks(BaseTrainingHooks(student_config, goodput_recorder=goodput_recorder))
 
       # 7. Create Iterator Wrappers (Use Utils)
       train_iter = distillation_utils.MaxTextToTunixIterator(raw_train_iter)

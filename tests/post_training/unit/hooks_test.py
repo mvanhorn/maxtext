@@ -132,7 +132,7 @@ class BaseHooksTest(unittest.TestCase):
     mock_recorder = MagicMock()
     mock_cfg = MagicMock()
     mock_cfg.enable_goodput_recording = True
-    hooks = BaseTrainingHooks(mock_cfg, mock_recorder)
+    hooks = BaseTrainingHooks(mock_cfg, goodput_recorder=mock_recorder)
     self.assertIsNone(hooks.metric_logger)
     self.mock_train_ctx.train_steps = 3
     hooks.on_train_start(self.mock_train_ctx)

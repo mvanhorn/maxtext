@@ -41,9 +41,6 @@ class BaseTrainingHooks(TrainingHooks):
   """Shared training hooks for post-training."""
 
   def __init__(self, config, mesh=None, learning_rate_schedule=None, goodput_recorder=None):
-    if learning_rate_schedule is None and goodput_recorder is None and not isinstance(mesh, jax.sharding.Mesh):
-      goodput_recorder = mesh
-      mesh = None
     self.config = config
     self.mesh = mesh
     self.metric_logger = MetricLogger(self.config, learning_rate_schedule) if learning_rate_schedule is not None else None
